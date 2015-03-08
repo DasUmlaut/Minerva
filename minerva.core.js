@@ -131,20 +131,22 @@ Minerva.image = function() {
 		var canvas = document.createElement("canvas");
 		canvas.width = this.width;
 		canvas.height = this.height;
-		
 		var ctx = canvas.getContext('2d');
 		var newData = ctx.createImageData(this.width, this.height);
-		
 		for (var i = 0; i < newData.data.length / 4; i++) {
 			newData.data[i*4+0] = (cR.getAt(i) * 255) & 255;
 			newData.data[i*4+1] = (cG.getAt(i) * 255) & 255;
 			newData.data[i*4+2] = (cB.getAt(i) * 255) & 255;
 			newData.data[i*4+3] = (cA.getAt(i) * 255) & 255;
 		}
-		
 		ctx.putImageData(newData, 0, 0);
 		return canvas;
-		
+	};
+	
+	this.toFileData = function() {
+		var canvas = this.toCanvas();
+		var dataUrl = canvas.toDataURL();
+		return dataUrl.replace("data:image/png;base64,", "");
 	};
 	
 };
