@@ -1,216 +1,300 @@
-Minerva.alphaModes.discard = function(a, b) {
+Minerva.alphamodes.discard = function(a, b) {
 	return {
 		a: 1.0,
 	};
 };
 
-Minerva.alphaModes.replace = function(a, b) {
+Minerva.alphamodes.replace = function(a, b) {
 	return {
 		a: b.a,
 	};
 };
 
-Minerva.alphaModes.clip = function(a, b) {
+Minerva.alphamodes.clip = function(a, b) {
 	return {
 		a: a.a,
 	};
 };
 
-Minerva.alphaModes.average = function(a, b) {
+Minerva.alphamodes.average = function(a, b) {
 	return {
 		a: (a.a + b.a) / 2.0,
 	};
 };
 
-Minerva.alphaModes.stamp = function(a, b) {
+Minerva.alphamodes.stamp = function(a, b) {
 	return {
 		a: (a.a + (b.a * 2.0) - 1.0),
 	};
 };
 
-Minerva.alphaModes.punch = function(a, b) {
+Minerva.alphamodes.punch = function(a, b) {
 	return {
 		a: (b.a + (a.a * 2.0) - 1.0),
 	};
 };
 
-Minerva.alphaModes.darken = function(a, b) {
+Minerva.alphamodes.darken = function(a, b) {
 	return {
 		a: Math.min(a.a, b.a),
 	};
 };
 
-Minerva.alphaModes.multiply = function(a, b) {
+Minerva.alphamodes.multiply = function(a, b) {
 	return {
 		a: a.a * b.a,
 	};
 };
 
-Minerva.alphaModes.colorBurn = function(a, b) {
+Minerva.alphamodes.colorburn = function(a, b) {
 	return {
 		a: (b.a == 0) ? 0 : 1.0 - (1.0 - a.a) / b.a,
 	};
 };
 
-Minerva.alphaModes.linearBurn = function(a, b) {
+Minerva.alphamodes.linearburn = function(a, b) {
 	return {
 		a: a.a + b.a - 1,
 	};
 };
 
-Minerva.alphaModes.softBurn = function(a, b) {
+Minerva.alphamodes.softburn = function(a, b) {
 	return {
 		a: (b.a+a.a<1) ? ( (a.a==1)?1:(b.a/2)/(1-a.a) ) : ( (b.a==0)?0:(1-((1-a.a)/2)/b.a) ),
 	};
 };
 
-Minerva.alphaModes.lighten = function(a, b) {
+Minerva.alphamodes.lighten = function(a, b) {
 	return {
 		a: Math.max(a.a, b.a),
 	};
 };
 
-Minerva.alphaModes.screen = function(a, b) {
+Minerva.alphamodes.screen = function(a, b) {
 	return {
 		a: 1-(1-a.a)*(1-b.a),
 	};
 };
 
-Minerva.alphaModes.linearDodge = function(a, b) {
+Minerva.alphamodes.lineardodge = function(a, b) {
 	return {
 		a: Math.min(1, a.a + b.a),
 	};
 };
 
-Minerva.alphaModes.colorDodge = function(a, b) {
+Minerva.alphamodes.colordodge = function(a, b) {
 	return {
 		a: (b.a == 1) ? 1 : a.a / ( 1 - b.a ),
 	};
 };
 
-Minerva.alphaModes.softDodge = function(a, b) {
+Minerva.alphamodes.softdodge = function(a, b) {
 	return {
 		a: ( (a.a+b.a<=1) ? ( (b.a==1) ? 1 : (a.a/2)/(1-b.a) ) : ( 1-((1-b.a)/2)/a.a ) ),
 	};
 };
 
-Minerva.alphaModes.overlay = function(a, b) {
-	return {
-		a: ( (a.a>0.5) ? (1-2*(1-b.a)*(1-a.a)) : (2*b.a*a.a) ),
-	};
-};
-
-Minerva.alphaModes.softLight = function(a, b) {
-	return {
-		a: ( ( b.a<0.5 ) ? ( (1-2*b.a)*(a.a*a.a)+(2*b.a*a.a) ) : ( (1-(2*b.a-1))*a.a+(2*b.a-1)*Math.sqrt(a.a) ) ),
-	};
-};
-
-Minerva.alphaModes.pegLight = function(a, b) {
-	return {
-		a: (1-a.a)*(a.a*b.a)+a.a*(1-(1-a.a)*(1-b.a)),
-	};
-};
-
-Minerva.alphaModes.hardLight = function(a, b) {
-	return {
-		a: (b.a>0.5) ? (1-2*(1-a.a)*(1-b.a)) : (2*a.a*b.a),
-	};
-};
-
-Minerva.alphaModes.furyLight = function(a, b) {
-	return {
-		a: a.a + b.a - 0.5,
-	};
-};
-
-Minerva.alphaModes.linearLight = function(a, b) {
-	return {
-		a: (b.a>0.5) ? (a.a+(2*(b.a-0.5))) : (a.a+(2*b.a)-1),
-	};
-};
-
-Minerva.alphaModes.vividLight = function(a, b) {
-	return {
-		a: (b.a<0.5) ? ( (b.a*2==0) ? 0 : (1-(1-a.a)/(b.a*2)) ) : ( (2*(b.a-0.5)==1) ? 1 : (a.a/(1-(2*(b.a-0.5)))) ),
-	};
-};
-
-Minerva.alphaModes.pinLight = function(a, b) {
-	return {
-		a: (b.a<2*a.a-1) ? (2*a.a-1) : ( (2*a.a-1<b.a) && (b.a<2*a.a)) ? b.a : 2*a.a,
-	};
-};
-
-Minerva.alphaModes.reflect = function(a, b) {
-	return {
-		a: (b.a==1) ? 1 : ( (a.a*a.a)/(1-b.a) > 1 ? 1 : (a.a*a.a)/(1-b.a) ),
-	};
-};
-
-Minerva.alphaModes.glow = function(a, b) {
-	return {
-		a: (a.a==1) ? 1 : ( (b.a*b.a)/(1-a.a) > 1 ? 1 : (b.a*b.a)/(1-a.a) ),
-	};
-};
-
-Minerva.alphaModes.freeze = function(a, b) {
-	return {
-		a: (b.a==0) ? 0 : 1-((1-a.a)*(1-a.a))/b.a,
-	};
-};
-
-Minerva.alphaModes.heat = function(a, b) {
-	return {
-		a: (a.a==0) ? 0 : 1-((1-b.a)*(1-b.a))/a.a,
-	};
-};
-
-Minerva.alphaModes.difference = function(a, b) {
+Minerva.alphamodes.difference = function(a, b) {
 	return {
 		a: Math.abs(a.a-b.a),
 	};
 };
 
-Minerva.alphaModes.negation = function(a, b) {
+Minerva.alphamodes.negation = function(a, b) {
 	return {
 		a: 1-Math.abs(1-a.a-b.a),
 	};
 };
 
-Minerva.alphaModes.exclusion = function(a, b) {
+Minerva.alphamodes.exclusion = function(a, b) {
 	return {
 		a: a.a+b.a-(2*a.a*b.a),
 	};
 };
 
-Minerva.alphaModes.divide = function(a, b) {
+Minerva.alphamodes.divide = function(a, b) {
 	return {
 		a: b.a==0 ? 0 : a.a/b.a,
 	};
 };
 
-Minerva.alphaModes.subtract = function(a, b) {
+Minerva.alphamodes.subtract = function(a, b) {
 	return {
 		a: Math.max(0, Math.min(1, a.a-b.a)),
 	};
 };
 
-Minerva.alphaModes.phoenix = function(a, b) {
+Minerva.alphamodes.phoenix = function(a, b) {
 	return {
 		a: (Math.min(a.a, b.a) - Math.max(a.a,b.a)) + 1.0,
 	};
 };
 
-Minerva.alphaModes.interpolation = function(a, b) {
+Minerva.alphamodes.inversesubtract = function(a, b) {
+	return {
+		a: b.a-(1-a.a),
+	};
+};
+
+Minerva.alphamodes.arctangent = function(a, b) {
+	return {
+		a: ( (a.a == 0) ? ( b.a == 0 ? 0 : 1 ) : 2 * Math.atan(a.a / b.a) / Math.PI ),
+	};
+};
+
+Minerva.alphamodes.parallel = function(a, b) {
+	return {
+		a: ( (a.a==0) ? 1 : (b.a == 0 ? 1 : (2 / (1/a.a + 1/b.a)) ) ),
+	};
+};
+
+Minerva.alphamodes.equivalence = function(a, b) {
+	return {
+		a: (1 - Math.abs(a.a - b.a)),
+	};
+};
+
+Minerva.alphamodes.grainmerge = function(a, b) {
+	return {
+		a: a.a + b.a - 0.5,
+	};
+};
+
+Minerva.alphamodes.grainextract = function(a, b) {
+	return {
+		a: a.a - b.a + 0.5,
+	};
+};
+
+Minerva.alphamodes.addsubtract = function(a, b) {
+	return {
+		a: Math.abs(Math.sqrt(a.a) - Math.sqrt(b.a)),
+	};
+};
+
+Minerva.alphamodes.gammadark = function(a, b) {
+	return {
+		a: (b.a == 0) ? 0 : Math.pow(a.a, 1/b.a),
+	};
+};
+
+Minerva.alphamodes.gammalight = function(a, b) {
+	return {
+		a: (a.a == 0) ? 0 : Math.pow(b.a, 1/a.a),
+	};
+};
+
+Minerva.alphamodes.geometricmean = function(a, b) {
+	return {
+		a: Math.sqrt(a.a * b.a),
+	};
+};
+
+Minerva.alphamodes.softlightsvg = function(a, b) {
+	return {
+		a: ( (a.a > 0.5) ? b.a + (2*a.a - 1) * ( (b.a > 0.25 ? Math.sqrt(b.a) : ((16*b.a-12)*b.a+4)) - b.a) : (b.a - (1 - 2 * a.a) * b.a * (1-b.a)) ),
+	};
+};
+
+Minerva.alphamodes.overlay = function(a, b) {
+	return {
+		a: ( (a.a>0.5) ? (1-2*(1-b.a)*(1-a.a)) : (2*b.a*a.a) ),
+	};
+};
+
+Minerva.alphamodes.softlight = function(a, b) {
+	return {
+		a: ( ( b.a<0.5 ) ? ( (1-2*b.a)*(a.a*a.a)+(2*b.a*a.a) ) : ( (1-(2*b.a-1))*a.a+(2*b.a-1)*Math.sqrt(a.a) ) ),
+	};
+};
+
+Minerva.alphamodes.peglight = function(a, b) {
+	return {
+		a: (1-a.a)*(a.a*b.a)+a.a*(1-(1-a.a)*(1-b.a)),
+	};
+};
+
+Minerva.alphamodes.hardlight = function(a, b) {
+	return {
+		a: (b.a>0.5) ? (1-2*(1-a.a)*(1-b.a)) : (2*a.a*b.a),
+	};
+};
+
+Minerva.alphamodes.linearlight = function(a, b) {
+	return {
+		a: (b.a>0.5) ? (a.a+(2*(b.a-0.5))) : (a.a+(2*b.a)-1),
+	};
+};
+
+Minerva.alphamodes.vividlight = function(a, b) {
+	return {
+		a: (b.a<0.5) ? ( (b.a*2==0) ? 0 : (1-(1-a.a)/(b.a*2)) ) : ( (2*(b.a-0.5)==1) ? 1 : (a.a/(1-(2*(b.a-0.5)))) ),
+	};
+};
+
+Minerva.alphamodes.pinlight = function(a, b) {
+	return {
+		a: (b.a<2*a.a-1) ? (2*a.a-1) : ( (2*a.a-1<b.a) && (b.a<2*a.a)) ? b.a : 2*a.a,
+	};
+};
+
+Minerva.alphamodes.reflect = function(a, b) {
+	return {
+		a: (b.a==1) ? 1 : ( (a.a*a.a)/(1-b.a) > 1 ? 1 : (a.a*a.a)/(1-b.a) ),
+	};
+};
+
+Minerva.alphamodes.glow = function(a, b) {
+	return {
+		a: (a.a==1) ? 1 : ( (b.a*b.a)/(1-a.a) > 1 ? 1 : (b.a*b.a)/(1-a.a) ),
+	};
+};
+
+Minerva.alphamodes.freeze = function(a, b) {
+	return {
+		a: (b.a==0) ? 0 : 1-((1-a.a)*(1-a.a))/b.a,
+	};
+};
+
+Minerva.alphamodes.heat = function(a, b) {
+	return {
+		a: (a.a==0) ? 0 : 1-((1-b.a)*(1-b.a))/a.a,
+	};
+};
+
+Minerva.alphamodes.interpolation = function(a, b) {
 	return {
 		a: 0.5-(0.25*Math.cos(Math.PI*a.a))-(0.25*Math.cos(Math.PI*b.a)),
 	};
 };
 
-Minerva.alphaModes.hardMix = function(a, b) {
+Minerva.alphamodes.hardmix = function(a, b) {
 	return {
 		a: a.a<1-b.a ? 0 : 1,
+	};
+};
+
+Minerva.alphamodes.binaryand = function(a, b) {
+	return {
+		a: ( (Math.round(a.a*255) & 255) & (Math.round(b.a*255) & 255) ) / 255,
+	};
+};
+
+Minerva.alphamodes.binaryor = function(a, b) {
+	return {
+		a: ( (Math.round(a.a*255) & 255) | (Math.round(b.a*255) & 255) ) / 255,
+	};
+};
+
+Minerva.alphamodes.binaryxor = function(a, b) {
+	return {
+		a: ( (Math.round(a.a*255) & 255) ^ (Math.round(b.a*255) & 255) ) / 255,
+	};
+};
+
+Minerva.alphamodes.binarynand = function(a, b) {
+	return {
+		a: ( (Math.round(a.a*255) & 255) & ~(Math.round(b.a*255) & 255) ) / 255,
 	};
 };
 
