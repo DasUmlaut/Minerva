@@ -1,6 +1,6 @@
 var Minerva = {};
-Minerva.colormodes = {};
-Minerva.alphamodes = {};
+Minerva.blendmodes = {};
+Minerva.mixmodes = {};
 Minerva.convert = {};
 Minerva.util = {};
 
@@ -43,9 +43,9 @@ Minerva.util.getAverageVisible = function(img) {
 		for (i = 0; i < img.width * img.height; i++) {
 			var c = img.getColorAt(i);
 			var a = img.getAlphaAt(i);
-			tR += c.r * a.a;
-			tG += c.g * a.a;
-			tB += c.b * a.a;
+			tR += c.r * a;
+			tG += c.g * a;
+			tB += c.b * a;
 			tA += a.a;
 		}
 		return {
@@ -127,9 +127,7 @@ Minerva.image = function() {
 	}
 	
 	this.getAlphaAt = function(i) {
-		return {
-			a: cA.getAt(i)
-		}
+		return cA.getAt(i);
 	}
 	
 	this.setColorAt = function(i, c) {
@@ -198,7 +196,6 @@ Minerva.blend = function(base, blend, colorMode, opacity, mask, alphaMode) {
 		opacity = 1.0;
 	}
 	
-	
 	if (colorMode == null) {
 		colorMode = "normal";
 	}
@@ -209,59 +206,91 @@ Minerva.blend = function(base, blend, colorMode, opacity, mask, alphaMode) {
 	colorMode = colorMode.toLowerCase();
 	alphaMode = alphaMode.toLowerCase();
 	
-	var colorBlendFunction = Minerva.colormodes.normal;
-	var alphaBlendFunction = Minerva.alphamodes.clip;
+	var colorBlendFunction = Minerva.blendmodes.normal;
+	var alphaBlendFunction = Minerva.blendmodes.clip;
 	
-	if (hasOwnProperty.call(Minerva.colormodes, colorMode)) {
-		colorBlendFunction = Minerva.colormodes[colorMode];
+	var whichBlendMode = "b";
+	
+	if (colorMode != null) {
+		if (hasOwnProperty.call(Minerva.blendmodes, colorMode)) {
+			colorBlendFunction = Minerva.blendmodes[colorMode];
+		} else if (hasOwnProperty.call(Minerva.mixmodes, colorMode)) {
+			colorBlendFunction = Minerva.mixmodes[colorMode];
+			whichBlendMode = "m";
+		}
 	}
 	
-	if (hasOwnProperty.call(Minerva.alphamodes, alphaMode)) {
-		alphaBlendFunction = Minerva.alphamodes[alphaMode];
+	if (alphaMode != null) {
+		if (hasOwnProperty.call(Minerva.blendmodes, alphaMode)) {
+			alphaBlendFunction = Minerva.blendmodes[alphaMode];
+		}
 	}
 	
-	var baseType = "none";
-	var blendType = "none";
-	var maskType = "none";
+	var baseType = 0;
+	var blendType = 0;
+	var maskType = 0;
 	
 	if (base instanceof Minerva.image) {
-		baseType = "image";
+		baseType = 2;
 	} else if (typeof(base) == "number") {
-		baseType = "number";
+		baseType = 1;
 	} else {
 		return;
 	}
 	
 	if (blend instanceof Minerva.image) {
-		blendType = "image";
+		blendType = 2;
 		if (mask == null) {
 			mask = blend.getChannel("a");
-			maskType = "channel";
+			maskType = 1;
 		}
 	} else if (typeof(blend) == "number") {
-		blendType = "number";
+		blendType = 1;
 	} else {
 		return;
 	}
 	
 	if (mask instanceof Minerva.channel) {
-		maskType = "channel";
+		maskType = 1;
 	}
 	
-	if (baseType == "number" && blendType == "number") {
+	if (baseType == 1 && blendType == 1) {
 		
-		return colorBlendFunction(Minerva.convert.hex2rgb(base), Minerva.convert.hex2rgb(blend));
+		var rC = {};
+		var cBase = Minerva.convert.hex2rgb(base);
+		var cBlend = Minerva.convert.hex2rgb(blend);
+		if (whichBlendMode == "b") {
+			rC = {
+				r: colorBlendFunction(cBase.r, cBlend.r),
+				g: colorBlendFunction(cBase.g, cBlend.g),
+				b: colorBlendFunction(cBase.b, cBlend.b),
+			};
+		} else {
+			rC = colorBlendFunction(cBase, cBlend);
+		}
+		return rC;
 		
-	} else if (baseType == "image" && blendType == "number") {
+	} else if (baseType == 2 && blendType == 1) {
 		var result = new Minerva.image();
 		result.setSize(base.width, base.height);
 		for (var i = 0; i < (base.width * base.height); i++) {
-			var rC = colorBlendFunction(base.getColorAt(i), Minerva.convert.hex2rgb(blend));
+			var rC = {};
+			var cBase = base.getColorAt(i);
+			var cBlend = Minerva.convert.hex2rgb(blend);
+			if (whichBlendMode == "b") {
+				rC = {
+					r: colorBlendFunction(cBase.r, cBlend.r),
+					g: colorBlendFunction(cBase.g, cBlend.g),
+					b: colorBlendFunction(cBase.b, cBlend.b),
+				};
+			} else {
+				rC = colorBlendFunction(cBase, cBlend);
+			}
 			var aV = alphaBlendFunction(base.getAlphaAt(i), 1.0);
 			var mV = 1.0;
-			if (maskType == "channel") {
+			if (maskType == 1) {
 				mV = mask.getAt(i) * opacity;
-			} else if (maskType == "none") {
+			} else if (maskType == 0) {
 				mV = opacity;
 			}
 			result.setColorAt(i, {
@@ -269,20 +298,31 @@ Minerva.blend = function(base, blend, colorMode, opacity, mask, alphaMode) {
 				g: mV * rC.g + (1.0 - mV) * base.getColorAt(i).g,
 				b: mV * rC.b + (1.0 - mV) * base.getColorAt(i).b,
 			});
-			result.setColorAt(i, mV * base.getColorAt(i) + (1.0 - mV) * rC);
-			result.setAlphaAt(i, aV.a);
+			//result.setColorAt(i, mV * base.getColorAt(i) + (1.0 - mV) * rC);
+			result.setAlphaAt(i, aV);
 		}
 		return result;
-	} else if (baseType == "number" && blendType == "image") {
+	} else if (baseType == 1 && blendType == 2) {
 		var result = new Minerva.image();
 		result.setSize(base.width, base.height);
 		for (var i = 0; i < (base.width * base.height); i++) {
-			var rC = colorBlendFunction(Minerva.convert.hex2rgb(base), blend.getColorAt(i));
+			var rC = {};
+			var cBase = Minerva.convert.hex2rgb(base);
+			var cBlend = blend.getColorAt(i);
+			if (whichBlendMode == "b") {
+				rC = {
+					r: colorBlendFunction(cBase.r, cBlend.r),
+					g: colorBlendFunction(cBase.g, cBlend.g),
+					b: colorBlendFunction(cBase.b, cBlend.b),
+				};
+			} else {
+				rC = colorBlendFunction(cBase, cBlend);
+			}
 			var aV = alphaBlendFunction(1.0, blend.getAlphaAt(i));
 			var mV = 1.0;
-			if (maskType == "channel") {
+			if (maskType == 1) {
 				mV = mask.getAt(i) * opacity;
-			} else if (maskType == "none") {
+			} else if (maskType == 0) {
 				mV = opacity;
 			}
 			result.setColorAt(i, {
@@ -290,20 +330,33 @@ Minerva.blend = function(base, blend, colorMode, opacity, mask, alphaMode) {
 				g: mV * rC.g + (1.0 - mV) * Minerva.convert.hex2rgb(base).g,
 				b: mV * rC.b + (1.0 - mV) * Minerva.convert.hex2rgb(base).b,
 			});
-			result.setAlphaAt(i, aV.a);
+			result.setAlphaAt(i, aV);
 		}
 		return result;
-	} else if (baseType == "image" && baseType == "image") {
+	} else if (baseType == 2 && baseType == 2) {
 		if ( (base.width == blend.width) && (base.height == blend.height) ) {
 			var result = new Minerva.image();
 			result.setSize(base.width, base.height);
 			for (var i = 0; i < (base.width * base.height); i++) {
-				var rC = colorBlendFunction(base.getColorAt(i), blend.getColorAt(i));
+				
+				var rC = {};
+				var cBase = base.getColorAt(i);
+				var cBlend = blend.getColorAt(i);
+				if (whichBlendMode == "b") {
+					rC = {
+						r: colorBlendFunction(cBase.r, cBlend.r),
+						g: colorBlendFunction(cBase.g, cBlend.g),
+						b: colorBlendFunction(cBase.b, cBlend.b),
+					};
+				} else {
+					rC = colorBlendFunction(cBase, cBlend);
+				}
+				
 				var aV = alphaBlendFunction(base.getAlphaAt(i), blend.getAlphaAt(i));
 				var mV = 1.0;
-				if (maskType == "channel") {
+				if (maskType == 1) {
 					mV = mask.getAt(i) * opacity;
-				} else if (maskType == "none") {
+				} else if (maskType == 1) {
 					mV = opacity;
 				}
 				
@@ -313,7 +366,7 @@ Minerva.blend = function(base, blend, colorMode, opacity, mask, alphaMode) {
 					g: mV * rC.g + (1.0 - mV) * base.getColorAt(i).g,
 					b: mV * rC.b + (1.0 - mV) * base.getColorAt(i).b,
 				});
-				result.setAlphaAt(i, aV.a);
+				result.setAlphaAt(i, aV);
 			}
 			return result;
 		}
