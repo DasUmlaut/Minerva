@@ -1,6 +1,6 @@
 var Minerva = {};
-Minerva.colorModes = {};
-Minerva.alphaModes = {};
+Minerva.colormodes = {};
+Minerva.alphamodes = {};
 Minerva.convert = {};
 Minerva.util = {};
 
@@ -206,8 +206,19 @@ Minerva.blend = function(base, blend, colorMode, opacity, mask, alphaMode) {
 		alphaMode = "clip";
 	}
 	
-	var colorBlendFunction = Minerva.colorModes[colorMode];
-	var alphaBlendFunction = Minerva.alphaModes[alphaMode];
+	colorMode = colorMode.toLowerCase();
+	alphaMode = alphaMode.toLowerCase();
+	
+	var colorBlendFunction = Minerva.colormodes.normal;
+	var alphaBlendFunction = Minerva.alphamodes.clip;
+	
+	if (hasOwnProperty.call(Minerva.colormodes, colorMode)) {
+		colorBlendFunction = Minerva.colormodes[colorMode];
+	}
+	
+	if (hasOwnProperty.call(Minerva.alphamodes, alphaMode)) {
+		alphaBlendFunction = Minerva.alphamodes[alphaMode];
+	}
 	
 	var baseType = "none";
 	var blendType = "none";
