@@ -56,9 +56,9 @@ Minerva.colorModes.grainMerge = function(a, b) {
 
 Minerva.colorModes.arcusTangent = function(a, b) {
 	return {
-		r: Math.arctan(a.r/b.r/Math.pi()) * 2,
-		g: Math.arctan(a.g/b.g/Math.pi()) * 2,
-		b: Math.arctan(a.b/b.b/Math.pi()) * 2
+		r: Math.atan(a.r/b.r/Math.PI) * 2,
+		g: Math.atan(a.g/b.g/Math.PI) * 2,
+		b: Math.atan(a.b/b.b/Math.PI) * 2
 	};
 };
 
@@ -104,9 +104,9 @@ Minerva.colorModes.punch = function(a, b) {
 
 Minerva.colorModes.interpolation = function(a, b) {
 	return {
-		r: 0.5-(0.25*Math.cos(Math.pi()*a.r))-(0.25*Math.cos(Math.pi()*b.r)),
-		g: 0.5-(0.25*Math.cos(Math.pi()*a.g))-(0.25*Math.cos(Math.pi()*b.g)),
-		b: 0.5-(0.25*Math.cos(Math.pi()*a.b))-(0.25*Math.cos(Math.pi()*b.b)),
+		r: 0.5-(0.25*Math.cos(Math.PI*a.r))-(0.25*Math.cos(Math.PI*b.r)),
+		g: 0.5-(0.25*Math.cos(Math.PI*a.g))-(0.25*Math.cos(Math.PI*b.g)),
+		b: 0.5-(0.25*Math.cos(Math.PI*a.b))-(0.25*Math.cos(Math.PI*b.b)),
 	};
 };
 
@@ -226,9 +226,9 @@ Minerva.colorModes.overlay = function(a, b) {
 
 Minerva.colorModes.softLight = function(a, b) {
 	return {
-		r: ( ( b.r<0.5 ) ? ( (1-2*b.r)*(a.r*a.r)+(2*b.r*a.r) ) : ( (1-(2*b.r-1))*a.r+(2(b.r-1)*Math.sqrt(a.r) ) ) ),
-		g: ( ( b.g<0.5 ) ? ( (1-2*b.g)*(a.g*a.g)+(2*b.g*a.g) ) : ( (1-(2*b.g-1))*a.g+(2(b.g-1)*Math.sqrt(a.g) ) ) ),
-		b: ( ( b.b<0.5 ) ? ( (1-2*b.b)*(a.b*a.b)+(2*b.b*a.b) ) : ( (1-(2*b.b-1))*a.b+(2(b.b-1)*Math.sqrt(a.b) ) ) ),
+		r: ( ( b.r<0.5 ) ? ( (1-2*b.r)*(a.r*a.r)+(2*b.r*a.r) ) : ( (1-(2*b.r-1))*a.r+(2*b.r-1)*Math.sqrt(a.r) ) ),
+		g: ( ( b.g<0.5 ) ? ( (1-2*b.g)*(a.g*a.g)+(2*b.g*a.g) ) : ( (1-(2*b.g-1))*a.g+(2*b.g-1)*Math.sqrt(a.g) ) ),
+		b: ( ( b.b<0.5 ) ? ( (1-2*b.b)*(a.b*a.b)+(2*b.b*a.b) ) : ( (1-(2*b.b-1))*a.b+(2*b.b-1)*Math.sqrt(a.b) ) ),
 	};
 };
 
@@ -397,8 +397,8 @@ Minerva.colorModes.rgbBlue = function(a, b) {
 };
 
 Minerva.colorModes.cmykCyan = function(a, b) {
-	var cymkA = Minerva.convert.rgb2cmyk(a);
-	var cymkB = Minerva.convert.rgb2cmyk(b);
+	var cmykA = Minerva.convert.rgb2cmyk(a);
+	var cmykB = Minerva.convert.rgb2cmyk(b);
 	return Minerva.convert.cmyk2rgb({
 		c:cmykB.c,
 		m:cmykA.m,
@@ -408,8 +408,8 @@ Minerva.colorModes.cmykCyan = function(a, b) {
 };
 
 Minerva.colorModes.cmykMagenta = function(a, b) {
-	var cymkA = Minerva.convert.rgb2cmyk(a);
-	var cymkB = Minerva.convert.rgb2cmyk(b);
+	var cmykA = Minerva.convert.rgb2cmyk(a);
+	var cmykB = Minerva.convert.rgb2cmyk(b);
 	return Minerva.convert.cmyk2rgb({
 		c:cmykA.c,
 		m:cmykB.m,
@@ -419,8 +419,8 @@ Minerva.colorModes.cmykMagenta = function(a, b) {
 };
 
 Minerva.colorModes.cmykYellow = function(a, b) {
-	var cymkA = Minerva.convert.rgb2cmyk(a);
-	var cymkB = Minerva.convert.rgb2cmyk(b);
+	var cmykA = Minerva.convert.rgb2cmyk(a);
+	var cmykB = Minerva.convert.rgb2cmyk(b);
 	return Minerva.convert.cmyk2rgb({
 		c:cmykA.c,
 		m:cmykA.m,
@@ -430,8 +430,8 @@ Minerva.colorModes.cmykYellow = function(a, b) {
 };
 
 Minerva.colorModes.cmykKey = function(a, b) {
-	var cymkA = Minerva.convert.rgb2cmyk(a);
-	var cymkB = Minerva.convert.rgb2cmyk(b);
+	var cmykA = Minerva.convert.rgb2cmyk(a);
+	var cmykB = Minerva.convert.rgb2cmyk(b);
 	return Minerva.convert.cmyk2rgb({
 		c:cmykA.c,
 		m:cmykA.m,
