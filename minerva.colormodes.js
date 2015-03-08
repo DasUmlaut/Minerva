@@ -397,9 +397,9 @@ Minerva.colorModes.rgbBlue = function(a, b) {
 };
 
 Minerva.colorModes.cmykCyan = function(a, b) {
-	var cymkA = Minerva.util.rgb2cmyk(a);
-	var cymkB = Minerva.util.rgb2cmyk(b);
-	return Minerva.util.cmyk2rgb({
+	var cymkA = Minerva.convert.rgb2cmyk(a);
+	var cymkB = Minerva.convert.rgb2cmyk(b);
+	return Minerva.convert.cmyk2rgb({
 		c:cmykB.c,
 		m:cmykA.m,
 		y:cmykA.y,
@@ -408,9 +408,9 @@ Minerva.colorModes.cmykCyan = function(a, b) {
 };
 
 Minerva.colorModes.cmykMagenta = function(a, b) {
-	var cymkA = Minerva.util.rgb2cmyk(a);
-	var cymkB = Minerva.util.rgb2cmyk(b);
-	return Minerva.util.cmyk2rgb({
+	var cymkA = Minerva.convert.rgb2cmyk(a);
+	var cymkB = Minerva.convert.rgb2cmyk(b);
+	return Minerva.convert.cmyk2rgb({
 		c:cmykA.c,
 		m:cmykB.m,
 		y:cmykA.y,
@@ -419,9 +419,9 @@ Minerva.colorModes.cmykMagenta = function(a, b) {
 };
 
 Minerva.colorModes.cmykYellow = function(a, b) {
-	var cymkA = Minerva.util.rgb2cmyk(a);
-	var cymkB = Minerva.util.rgb2cmyk(b);
-	return Minerva.util.cmyk2rgb({
+	var cymkA = Minerva.convert.rgb2cmyk(a);
+	var cymkB = Minerva.convert.rgb2cmyk(b);
+	return Minerva.convert.cmyk2rgb({
 		c:cmykA.c,
 		m:cmykA.m,
 		y:cmykB.y,
@@ -430,9 +430,9 @@ Minerva.colorModes.cmykYellow = function(a, b) {
 };
 
 Minerva.colorModes.cmykKey = function(a, b) {
-	var cymkA = Minerva.util.rgb2cmyk(a);
-	var cymkB = Minerva.util.rgb2cmyk(b);
-	return Minerva.util.cmyk2rgb({
+	var cymkA = Minerva.convert.rgb2cmyk(a);
+	var cymkB = Minerva.convert.rgb2cmyk(b);
+	return Minerva.convert.cmyk2rgb({
 		c:cmykA.c,
 		m:cmykA.m,
 		y:cmykA.y,
@@ -441,9 +441,9 @@ Minerva.colorModes.cmykKey = function(a, b) {
 };
 
 Minerva.colorModes.hsvHue = function(a, b) {
-	var hsvA = Minerva.util.rgb2hsv(a);
-	var hsvB = Minerva.util.rgb2hsv(b);
-	return Minerva.util.hsv2rgb({
+	var hsvA = Minerva.convert.rgb2hsv(a);
+	var hsvB = Minerva.convert.rgb2hsv(b);
+	return Minerva.convert.hsv2rgb({
 		h:hsvB.h,
 		s:hsvA.s,
 		v:hsvA.v
@@ -451,9 +451,9 @@ Minerva.colorModes.hsvHue = function(a, b) {
 };
 
 Minerva.colorModes.hsvSaturation = function(a, b) {
-	var hsvA = Minerva.util.rgb2hsv(a);
-	var hsvB = Minerva.util.rgb2hsv(b);
-	return Minerva.util.hsv2rgb({
+	var hsvA = Minerva.convert.rgb2hsv(a);
+	var hsvB = Minerva.convert.rgb2hsv(b);
+	return Minerva.convert.hsv2rgb({
 		h:hsvA.h,
 		s:hsvB.s,
 		v:hsvA.v
@@ -461,9 +461,9 @@ Minerva.colorModes.hsvSaturation = function(a, b) {
 };
 
 Minerva.colorModes.hsvValue = function(a, b) {
-	var hsvA = Minerva.util.rgb2hsv(a);
-	var hsvB = Minerva.util.rgb2hsv(b);
-	return Minerva.util.hsv2rgb({
+	var hsvA = Minerva.convert.rgb2hsv(a);
+	var hsvB = Minerva.convert.rgb2hsv(b);
+	return Minerva.convert.hsv2rgb({
 		h:hsvA.h,
 		s:hsvA.s,
 		v:hsvB.v
@@ -471,9 +471,9 @@ Minerva.colorModes.hsvValue = function(a, b) {
 };
 
 Minerva.colorModes.hsyHue = function(a, b) {
-	var hsyA = Minerva.util.rgb2hsy(a);
-	var hsyB = Minerva.util.rgb2hsy(b);
-	return Minerva.util.hsy2rgb({
+	var hsyA = Minerva.convert.rgb2hsy(a);
+	var hsyB = Minerva.convert.rgb2hsy(b);
+	return Minerva.convert.hsy2rgb({
 		h:hsyB.h,
 		s:hsyA.s,
 		v:hsyA.v
@@ -481,9 +481,9 @@ Minerva.colorModes.hsyHue = function(a, b) {
 };
 
 Minerva.colorModes.hsySaturation = function(a, b) {
-	var hsyA = Minerva.util.rgb2hsy(a);
-	var hsyB = Minerva.util.rgb2hsy(b);
-	return Minerva.util.hsy2rgb({
+	var hsyA = Minerva.convert.rgb2hsy(a);
+	var hsyB = Minerva.convert.rgb2hsy(b);
+	return Minerva.convert.hsy2rgb({
 		h:hsyA.h,
 		s:hsyB.s,
 		v:hsyA.v
@@ -491,9 +491,9 @@ Minerva.colorModes.hsySaturation = function(a, b) {
 };
 
 Minerva.colorModes.hsyLuminance = function(a, b) {
-	var hsyA = Minerva.util.rgb2hsy(a);
-	var hsyB = Minerva.util.rgb2hsy(b);
-	return Minerva.util.hsy2rgb({
+	var hsyA = Minerva.convert.rgb2hsy(a);
+	var hsyB = Minerva.convert.rgb2hsy(b);
+	return Minerva.convert.hsy2rgb({
 		h:hsyA.h,
 		s:hsyA.s,
 		v:hsyB.v
