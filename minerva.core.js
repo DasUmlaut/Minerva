@@ -424,6 +424,52 @@ Minerva.convert.hsv2rgb = function(hsv) {
 	}
 };
 
+Minerva.convert.hsy2rgb = function(hsy) {
+	var r = 0;
+    var g = 0;
+    var b = 0;
+	
+	var k = 0;
+
+    if (hsy.h >= 0 && hsy.h < (1/6)) {
+        k = hsy.s * hsy.h / (1/6);
+        b = hsy.y - Minerva.settings.lumaR * hsy.s - Minerva.settings.lumaG * k;
+        r = b + hsy.s;
+        g = b + k;
+    } else if (hsy.h >= (1/6) && hsy.h < (2/6)) {
+        k = hsy.s * (hsy.h - (1/6)) / (1/6);
+        g = hsy.y + Minerva.settings.lumaB * hsy.s + Minerva.settings.lumaR * k;
+        b = g - hsy.s;
+        r = g - k;
+    } else if (hsy.h >= (2/6) && hsy.h < (3/6)) {
+        k = hsy.s * (hsy.h - (2/6)) / (1/6);
+        r = hsy.y - Minerva.settings.lumaG * hsy.s - Minerva.settings.lumaB * k;
+        g = r + hsy.s;
+        b = r + k;
+    } else if (hsy.h >= (3/6) && hsy.h < (4/6)) {
+        k = hsy.s * (hsy.h - (3/6)) / (1/6);
+        b = hsy.y + Minerva.settings.lumaR * hsy.s + Minerva.settings.lumaG * k;
+        r = b - hsy.s;
+        g = b - k;
+    } else if (hsy.h >= (4/6) && hsy.h < (5/6)) {
+        k = hsy.s * (hsy.h - (4/6)) / (1/6);
+        g = hsy.y - Minerva.settings.lumaB * hsy.s - Minerva.settings.lumaR * k;
+        b = g + hsy.s;
+        r = g + hsy.k;
+    } else {
+        k = hsy.s * (hsy.h - (5/6)) / (1/6);
+        r = hsy.y + Minerva.settings.lumaG * hsy.s + Minerva.settings.lumaB * k;
+        g = r - hsy.s;
+        b = r - hsy.k;
+    }
+	
+	return {
+		r:r,
+		g:g,
+		b:b
+	}
+}
+
 Minerva.convert.rgb2hsy = function(rgb) {
 	
 	var h = 0;
@@ -454,13 +500,13 @@ Minerva.convert.rgb2hsy = function(rgb) {
 
 	return {
 		h:h,
-		s:Math.min(Math.max(s, 0, 1)),
-		y:Math.min(Math.max(y, 0, 1))
+		s:Math.min(Math.max(s, 0), 1),
+		y:Math.min(Math.max(y, 0), 1)
 	}
 	
 };
 
-Minerva.convert.hsy2rgb = function(hsy) {
+Minerva.convert.hsy2rgb2 = function(hsy) {
 
     var r = 0;
     var g = 0;
