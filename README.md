@@ -1,4 +1,4 @@
 # Minerva
 a Javascript image blending library.
 
-hsyModes are still broken. Looking for a better rgb <-> hsy formula...
+need to create some aliases for some blending modes.
