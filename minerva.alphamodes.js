@@ -102,7 +102,7 @@ Minerva.alphaModes.overlay = function(a, b) {
 
 Minerva.alphaModes.softLight = function(a, b) {
 	return {
-		a: ( ( b.a<0.5 ) ? ( (1-2*b.a)*(a.a*a.a)+(2*b.a*a.a) ) : ( (1-(2*b.a-1))*a.a+(2(b.a-1)*Math.sqrt(a.a) ) ) ),
+		a: ( ( b.a<0.5 ) ? ( (1-2*b.a)*(a.a*a.a)+(2*b.a*a.a) ) : ( (1-(2*b.a-1))*a.a+(2*b.a-1)*Math.sqrt(a.a) ) ),
 	};
 };
 
@@ -204,7 +204,7 @@ Minerva.alphaModes.phoenix = function(a, b) {
 
 Minerva.alphaModes.interpolation = function(a, b) {
 	return {
-		a: 0.5-(0.25*Math.cos(Math.pi()*a.a))-(0.25*Math.cos(Math.pi()*b.a)),
+		a: 0.5-(0.25*Math.cos(Math.PI*a.a))-(0.25*Math.cos(Math.PI*b.a)),
 	};
 };
 
