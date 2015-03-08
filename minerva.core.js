@@ -15,7 +15,7 @@ Minerva.settings = {
 	*/
 };
 
-Minerva.util.getAverageTotal(img) {
+Minerva.util.getAverageTotal = function(img) {
 	if (img instanceof Minerva.image) {
 		var tR = 0;
 		var tG = 0;
@@ -34,7 +34,7 @@ Minerva.util.getAverageTotal(img) {
 	}
 };
 
-Minerva.util.getAverageVisible(img) {
+Minerva.util.getAverageVisible = function(img) {
 	if (img instanceof Minerva.image) {
 		var tR = 0;
 		var tG = 0;
