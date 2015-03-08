@@ -22,95 +22,21 @@ Minerva.colorModes.average = function(a, b) {
 	};
 };
 
-Minerva.colorModes.parallel = function(a, b) {
-	return {
-		r: 2 / (a.r + b.r),
-		g: 2 / (a.g + b.g),
-		b: 2 / (a.b + b.b)
-	};
-};
-
-Minerva.colorModes.geometricMean = function(a, b) {
-	return {
-		r: Math.sqrt(a.r * b.r),
-		g: Math.sqrt(a.g * b.g),
-		b: Math.sqrt(a.b * b.b),
-	};
-};
-
-Minerva.colorModes.grainExtract = function(a, b) {
-	return {
-		r: 0.5 + (b.r - a.r),
-		g: 0.5 + (b.g - a.g),
-		b: 0.5 + (b.b - a.b)
-	};
-};
-
-Minerva.colorModes.grainMerge = function(a, b) {
-	return {
-		r: (a.r + b.r) - 0.5,
-		g: (a.g + b.g) - 0.5,
-		b: (a.b + b.b) - 0.5
-	};
-};
-
-Minerva.colorModes.arcusTangent = function(a, b) {
-	return {
-		r: Math.atan(a.r/b.r/Math.PI) * 2,
-		g: Math.atan(a.g/b.g/Math.PI) * 2,
-		b: Math.atan(a.b/b.b/Math.PI) * 2
-	};
-};
-
-Minerva.colorModes.equivelance = function(a, b) {
-	return {
-		r: (b.r-a.r == 0) ? 1 : 1 / (b.r - a.r),
-		g: (b.g-a.g == 0) ? 1 : 1 / (b.g - a.g),
-		b: (b.b-a.b == 0) ? 1 : 1 / (b.b - a.b)
-	};
-};
-
-Minerva.colorModes.addSubtract = function(a, b) {
-	return {
-		r: b.r - Math.sqrt(a.r),
-		g: b.g - Math.sqrt(a.g),
-		b: b.b - Math.sqrt(a.b)
-	};
-};
-
-Minerva.colorModes.gammaLight = function(a, b) {
-	return {
-		r: Math.pow(a.r, b.r),
-		g: Math.pow(a.g, b.g),
-		b: Math.pow(a.b, b.b)
-	};
-};
-
 Minerva.colorModes.stamp = function(a, b) {
 	return {
-		r: (a.r + (b.r * 2) - 1),
-		g: (a.g + (b.g * 2) - 1),
-		b: (a.b + (b.b * 2) - 1),
+		r: (a.r + (b.r * 2.0) - 1.0),
+		g: (a.g + (b.g * 2.0) - 1.0),
+		b: (a.b + (b.b * 2.0) - 1.0),
 	};
 };
 
 Minerva.colorModes.punch = function(a, b) {
 	return {
-		r: (b.r + (a.r * 2) - 1),
-		g: (b.g + (a.g * 2) - 1),
-		b: (b.b + (a.b * 2) - 1),
+		r: (b.r + (a.r * 2.0) - 1.0),
+		g: (b.g + (a.g * 2.0) - 1.0),
+		b: (b.b + (a.b * 2.0) - 1.0),
 	};
 };
-
-Minerva.colorModes.interpolation = function(a, b) {
-	return {
-		r: 0.5-(0.25*Math.cos(Math.PI*a.r))-(0.25*Math.cos(Math.PI*b.r)),
-		g: 0.5-(0.25*Math.cos(Math.PI*a.g))-(0.25*Math.cos(Math.PI*b.g)),
-		b: 0.5-(0.25*Math.cos(Math.PI*a.b))-(0.25*Math.cos(Math.PI*b.b)),
-	};
-};
-
-/* Darken */
 
 Minerva.colorModes.darken = function(a, b) {
 	return {
@@ -118,16 +44,6 @@ Minerva.colorModes.darken = function(a, b) {
 		g: Math.min(a.g, b.g),
 		b: Math.min(a.b, b.b),
 	};
-};
-
-Minerva.colorModes.darkerColor = function(a, b) {
-	var lumA = 0.3 * a.r + 0.59 * a.g + 0.11 * a.b;
-	var lumB = 0.3 * b.r + 0.59 * b.g + 0.11 * b.b;
-	if (lumB > lumA) {
-		return a;
-	} else {
-		return b;
-	}
 };
 
 Minerva.colorModes.multiply = function(a, b) {
@@ -160,18 +76,6 @@ Minerva.colorModes.softBurn = function(a, b) {
 		g: (b.g+a.g<1) ? ( (a.g==1)?1:(b.g/2)/(1-a.g) ) : ( (b.g==0)?0:(1-((1-a.g)/2)/b.g) ),
 		b: (b.b+a.b<1) ? ( (a.b==1)?1:(b.b/2)/(1-a.b) ) : ( (b.b==0)?0:(1-((1-a.b)/2)/b.b) ),
 	};
-};
-
-/* Lighten */
-
-Minerva.colorModes.lighterColor = function(a, b) {
-	var lumA = 0.3 * a.r + 0.59 * a.g + 0.11 * a.b;
-	var lumB = 0.3 * b.r + 0.59 * b.g + 0.11 * b.b;
-	if (lumA > lumB) {
-		return a;
-	} else {
-		return b;
-	}
 };
 
 Minerva.colorModes.lighten = function(a, b) {
@@ -214,7 +118,85 @@ Minerva.colorModes.softDodge = function(a, b) {
 	};
 };
 
-/* Contrast */
+Minerva.colorModes.arcTangent = function(a, b) {
+	return {
+		r: ( (a.r == 0) ? ( b.r == 0 ? 0 : 1 ) : 2 * Math.atan(a.r / b.r) / Math.PI ),
+		g: ( (a.g == 0) ? ( b.g == 0 ? 0 : 1 ) : 2 * Math.atan(a.g / b.g) / Math.PI ),
+		b: ( (a.b == 0) ? ( b.b == 0 ? 0 : 1 ) : 2 * Math.atan(a.b / b.b) / Math.PI ),
+	};
+};
+
+Minerva.colorModes.parallel = function(a, b) {
+	return {
+		r: ( (a.r==0) ? 1 : (b.r == 0 ? 1 : (2 / (1/a.r + 1/b.r)) ) ),
+		g: ( (a.g==0) ? 1 : (b.g == 0 ? 1 : (2 / (1/a.g + 1/b.g)) ) ),
+		b: ( (a.b==0) ? 1 : (b.b == 0 ? 1 : (2 / (1/a.b + 1/b.b)) ) ),
+	};
+};
+
+Minerva.colorModes.equivalence = function(a, b) {
+	return {
+		r: (1 - Math.abs(a.r - b.r)),
+		g: (1 - Math.abs(a.g - b.g)),
+		b: (1 - Math.abs(a.b - b.b)),
+	};
+};
+
+Minerva.colorModes.grainMerge = function(a, b) {
+	return {
+		r: a.r + b.r - 0.5,
+		g: a.g + b.g - 0.5,
+		b: a.b + b.b - 0.5,
+	};
+};
+
+Minerva.colorModes.grainExtract = function(a, b) {
+	return {
+		r: a.r - b.r + 0.5,
+		g: a.g - b.g + 0.5,
+		b: a.b - b.b + 0.5,
+	};
+};
+
+Minerva.colorModes.addSubtract = function(a, b) {
+	return {
+		r: Math.abs(Math.sqrt(a.r) - Math.sqrt(b.r)),
+		g: Math.abs(Math.sqrt(a.g) - Math.sqrt(b.g)),
+		b: Math.abs(Math.sqrt(a.b) - Math.sqrt(b.b)),
+	};
+};
+
+Minerva.colorModes.gammaDark = function(a, b) {
+	return {
+		r: (b.r == 0) ? 0 : Math.pow(a.r, 1/b.r),
+		g: (b.g == 0) ? 0 : Math.pow(a.g, 1/b.g),
+		b: (b.b == 0) ? 0 : Math.pow(a.b, 1/b.b),
+	};
+};
+
+Minerva.colorModes.gammaLight = function(a, b) {
+	return {
+		r: (a.r == 0) ? 0 : Math.pow(b.r, 1/a.r),
+		g: (a.g == 0) ? 0 : Math.pow(b.g, 1/a.g),
+		b: (a.b == 0) ? 0 : Math.pow(b.b, 1/a.b),
+	};
+};
+
+Minerva.colorModes.geometricMean = function(a, b) {
+	return {
+		r: Math.sqrt(a.r * b.r),
+		g: Math.sqrt(a.g * b.g),
+		b: Math.sqrt(a.b * b.b),
+	};
+};
+
+Minerva.colorModes.softLightSVG = function(a, b) {
+	return {
+		r: ( (a.r > 0.5) ? b.r + (2*a.r - 1) * ( (b.r > 0.25 ? Math.sqrt(b.r) : ((16*b.r-12)*b.r+4)) - b.r) : (b.r - (1 - 2 * a.r) * b.r * (1-b.r)) ),
+		g: ( (a.g > 0.5) ? b.g + (2*a.g - 1) * ( (b.g > 0.25 ? Math.sqrt(b.g) : ((16*b.g-12)*b.g+4)) - b.g) : (b.g - (1 - 2 * a.g) * b.g * (1-b.g)) ),
+		b: ( (a.b > 0.5) ? b.b + (2*a.b - 1) * ( (b.b > 0.25 ? Math.sqrt(b.b) : ((16*b.b-12)*b.b+4)) - b.b) : (b.b - (1 - 2 * a.b) * b.b * (1-b.b)) ),
+	};
+};
 
 Minerva.colorModes.overlay = function(a, b) {
 	return {
@@ -312,8 +294,6 @@ Minerva.colorModes.heat = function(a, b) {
 	};
 };
 
-/* Inverters */
-
 Minerva.colorModes.difference = function(a, b) {
 	return {
 		r: Math.abs(a.r-b.r),
@@ -362,11 +342,59 @@ Minerva.colorModes.phoenix = function(a, b) {
 	};
 };
 
+Minerva.colorModes.inverseSubtract = function(a, b) {
+	return {
+		r: b.r-(1-a.r),
+		g: b.g-(1-a.g),
+		b: b.b-(1-a.b),
+	};
+};
+
+Minerva.colorModes.interpolation = function(a, b) {
+	return {
+		r: 0.5-(0.25*Math.cos(Math.PI*a.r))-(0.25*Math.cos(Math.PI*b.r)),
+		g: 0.5-(0.25*Math.cos(Math.PI*a.g))-(0.25*Math.cos(Math.PI*b.g)),
+		b: 0.5-(0.25*Math.cos(Math.PI*a.b))-(0.25*Math.cos(Math.PI*b.b)),
+	};
+};
+
 Minerva.colorModes.hardMix = function(a, b) {
 	return {
 		r: a.r<1-b.r ? 0 : 1,
 		g: a.g<1-b.g ? 0 : 1,
 		b: a.b<1-b.b ? 0 : 1,
+	};
+};
+
+Minerva.colorModes.binaryAnd = function(a, b) {
+	return {
+		r: ( (Math.round(a.r*255) & 255) & (Math.round(b.r*255) & 255) ) / 255,
+		g: ( (Math.round(a.g*255) & 255) & (Math.round(b.g*255) & 255) ) / 255,
+		b: ( (Math.round(a.b*255) & 255) & (Math.round(b.b*255) & 255) ) / 255,
+	};
+};
+
+Minerva.colorModes.binaryOr = function(a, b) {
+	return {
+		r: ( (Math.round(a.r*255) & 255) | (Math.round(b.r*255) & 255) ) / 255,
+		g: ( (Math.round(a.g*255) & 255) | (Math.round(b.g*255) & 255) ) / 255,
+		b: ( (Math.round(a.b*255) & 255) | (Math.round(b.b*255) & 255) ) / 255,
+	};
+};
+
+Minerva.colorModes.binaryXor = function(a, b) {
+	return {
+		r: ( (Math.round(a.r*255) & 255) ^ (Math.round(b.r*255) & 255) ) / 255,
+		g: ( (Math.round(a.g*255) & 255) ^ (Math.round(b.g*255) & 255) ) / 255,
+		b: ( (Math.round(a.b*255) & 255) ^ (Math.round(b.b*255) & 255) ) / 255,
+	};
+};
+
+Minerva.colorModes.binaryNand = function(a, b) {
+	return {
+		r: ( (Math.round(a.r*255) & 255) & ~(Math.round(b.r*255) & 255) ) / 255,
+		g: ( (Math.round(a.g*255) & 255) & ~(Math.round(b.g*255) & 255) ) / 255,
+		b: ( (Math.round(a.b*255) & 255) & ~(Math.round(b.b*255) & 255) ) / 255,
 	};
 };
 
@@ -476,7 +504,7 @@ Minerva.colorModes.hsyHue = function(a, b) {
 	return Minerva.convert.hsy2rgb({
 		h:hsyB.h,
 		s:hsyA.s,
-		v:hsyA.v
+		y:hsyA.y
 	});
 };
 
@@ -486,7 +514,7 @@ Minerva.colorModes.hsySaturation = function(a, b) {
 	return Minerva.convert.hsy2rgb({
 		h:hsyA.h,
 		s:hsyB.s,
-		v:hsyA.v
+		y:hsyA.y
 	});
 };
 
@@ -496,38 +524,67 @@ Minerva.colorModes.hsyLuminance = function(a, b) {
 	return Minerva.convert.hsy2rgb({
 		h:hsyA.h,
 		s:hsyA.s,
-		v:hsyB.v
+		y:hsyB.y
 	});
 };
 
-Minerva.colorModes.binaryAnd = function(a, b) {
-	return {
-		r: ( (Math.round(a.r*255) & 255) & (Math.round(b.r*255) & 255) ) / 255,
-		g: ( (Math.round(a.g*255) & 255) & (Math.round(b.g*255) & 255) ) / 255,
-		b: ( (Math.round(a.b*255) & 255) & (Math.round(b.b*255) & 255) ) / 255,
-	};
+Minerva.colorModes.labLuminance = function(a, b) {
+	var labA = Minerva.convert.rgb2lab(a);
+	var labB = Minerva.convert.rgb2lab(b);
+	return Minerva.convert.lab2rgb({
+		l:labB.l,
+		a:labA.a,
+		b:labA.b,
+	});
 };
 
-Minerva.colorModes.binaryOr = function(a, b) {
-	return {
-		r: ( (Math.round(a.r*255) & 255) | (Math.round(b.r*255) & 255) ) / 255,
-		g: ( (Math.round(a.g*255) & 255) | (Math.round(b.g*255) & 255) ) / 255,
-		b: ( (Math.round(a.b*255) & 255) | (Math.round(b.b*255) & 255) ) / 255,
-	};
+Minerva.colorModes.labAlpha = function(a, b) {
+	var labA = Minerva.convert.rgb2lab(a);
+	var labB = Minerva.convert.rgb2lab(b);
+	return Minerva.convert.lab2rgb({
+		l:labA.l,
+		a:labB.a,
+		b:labA.b,
+	});
 };
 
-Minerva.colorModes.binaryXor = function(a, b) {
-	return {
-		r: ( (Math.round(a.r*255) & 255) ^ (Math.round(b.r*255) & 255) ) / 255,
-		g: ( (Math.round(a.g*255) & 255) ^ (Math.round(b.g*255) & 255) ) / 255,
-		b: ( (Math.round(a.b*255) & 255) ^ (Math.round(b.b*255) & 255) ) / 255,
-	};
+
+Minerva.colorModes.labBeta = function(a, b) {
+	var labA = Minerva.convert.rgb2lab(a);
+	var labB = Minerva.convert.rgb2lab(b);
+	return Minerva.convert.lab2rgb({
+		l:labA.l,
+		a:labA.a,
+		b:labB.b,
+	});
 };
 
-Minerva.colorModes.binaryNand = function(a, b) {
-	return {
-		r: ( (Math.round(a.r*255) & 255) & (~Math.round(b.r*255) & 255) ) / 255,
-		g: ( (Math.round(a.g*255) & 255) & (~Math.round(b.g*255) & 255) ) / 255,
-		b: ( (Math.round(a.b*255) & 255) & (~Math.round(b.b*255) & 255) ) / 255,
-	};
+Minerva.colorModes.lchLuminance = function(a, b) {
+	var lchA = Minerva.convert.rgb2lch(a);
+	var lchB = Minerva.convert.rgb2lch(b);
+	return Minerva.convert.lch2rgb({
+		l:lchB.l,
+		c:lchA.c,
+		h:lchA.h,
+	});
+};
+
+Minerva.colorModes.lchChroma = function(a, b) {
+	var lchA = Minerva.convert.rgb2lch(a);
+	var lchB = Minerva.convert.rgb2lch(b);
+	return Minerva.convert.lch2rgb({
+		l:lchA.l,
+		c:lchB.c,
+		h:lchA.h,
+	});
+};
+
+Minerva.colorModes.lchHue = function(a, b) {
+	var lchA = Minerva.convert.rgb2lch(a);
+	var lchB = Minerva.convert.rgb2lch(b);
+	return Minerva.convert.lch2rgb({
+		l:lchA.l,
+		c:lchA.c,
+		h:lchB.h,
+	});
 };
