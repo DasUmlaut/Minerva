@@ -15,6 +15,47 @@ Minerva.settings = {
 	*/
 };
 
+Minerva.util.getAverageTotal(img) {
+	if (img instanceof Minerva.image) {
+		var tR = 0;
+		var tG = 0;
+		var tB = 0;
+		for (i = 0; i < img.width * img.height; i++) {
+			var c = img.getColorAt(i);
+			tR += c.r;
+			tG += c.g;
+			tB += c.b;
+		}
+		return {
+			r : tR / (img.width * img.height),
+			g : tG / (img.width * img.height),
+			b : tB / (img.width * img.height)
+		}
+	}
+};
+
+Minerva.util.getAverageVisible(img) {
+	if (img instanceof Minerva.image) {
+		var tR = 0;
+		var tG = 0;
+		var tB = 0;
+		var tA = 0;
+		for (i = 0; i < img.width * img.height; i++) {
+			var c = img.getColorAt(i);
+			var a = img.getAlphaAt(i);
+			tR += c.r * a.a;
+			tG += c.g * a.a;
+			tB += c.b * a.a;
+			tA += a.a;
+		}
+		return {
+			r : tR / (img.width * img.height) / tA,
+			g : tG / (img.width * img.height) / tA,
+			b : tB / (img.width * img.height) / tA
+		}
+	}
+};
+
 Minerva.channel = function() {
 	
 	var data = [];
