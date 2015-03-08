@@ -1,5 +1,3 @@
-
-
 Minerva.preloader = new function() {
 	var queue = [];
 	var map = {};
