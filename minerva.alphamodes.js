@@ -213,3 +213,4 @@ Minerva.alphaModes.hardMix = function(a, b) {
 		a: a.a<1-b.a ? 0 : 1,
 	};
 };
+
