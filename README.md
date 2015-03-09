@@ -1,6 +1,4 @@
 # Minerva
 a Javascript image blending library.
 
-need to create some aliases for some blending modes.
-
-I gave up on making HSI work right. I kept getting clipping errors...
+Here's the deal. I designed this to batch-produce textures for my Minecraft mod. It uses HTML canvas to blend images. You'll have to use a preloader to be able to do much with it (Minerva has one included). If anyone really wants to start using this and needs documentation, I'll gladly right some.
