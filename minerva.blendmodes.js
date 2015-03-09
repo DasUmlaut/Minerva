@@ -107,7 +107,7 @@ Minerva.blendmodes.parallel = function(a, b) {
 };
 
 Minerva.blendmodes.equivalence = function(a, b) {
-	return (Math.abs(b - a));
+	return 1 - Math.abs(b-a);
 };
 
 Minerva.blendmodes.grainmerge = function(a, b) {
@@ -451,13 +451,3 @@ Minerva.mixmodes.cmykkey = function(a, b) {
 		b:theOut[2] / 255,
 	}
 };
-
-
-
-/* Lighter luma */
-/* Darker luma */
-/* Lighter color */
-/* Darker color */
-
-/* Aliases */
-
