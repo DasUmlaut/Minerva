@@ -374,4 +374,3 @@ Minerva.blend = function(base, blend, colorMode, opacity, mask, alphaMode) {
 	return;
 	
 };
-
