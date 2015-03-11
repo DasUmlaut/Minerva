@@ -7,44 +7,9 @@ Minerva.noise = new function() {
 		'igrad': [ [1, 1], [-1, 1], [1, -1], [-1, -1], [1, 0], [-1, 0], [0, 1], [0, -1] ],
 	};
 	
-	var helper = {
-		'setSeed': function(seed) {
-			lib.seed = seed;
-		},
-		'random': function() {
-			lib.seed = (lib.seed * 9301 + 49297) % 233280;
-			var rnd = lib.seed / 233280.0;
-			return rnd;
-		},
-		'permutate': function(size) {
-			var t = [];
-			var u = [];
-			
-			for (i = 0; i < size*2; i++) {
-				var v = Math.round(helper.random() * 255) & 255;
-				t[i] = v;
-				u[i] = v % 8;
-			}
-			lib.perm = t.concat(t);
-			lib.permMod8 = u.concat(u);
-		},
-		'grad2': function(hash, x, y) {
-			var h = hash & 7;
-			var u = h<4 ? x : y;
-			var v = h<4 ? y : x;
-			return ((h&1)?-u : u) + ((h&2)?-2*v : 2*v);
-		},
-		'fade': function(t) {
-			return  t * t * t * ( t * ( t * 6 - 15 ) + 10 );
-		},
-		'lerp': function(t, a, b) {
-			return (a) + (t)*((b)-(a));
-		},
-	};
-	
 	var noiseFNs = {
 		'random': function(x, y, px, py, args) {
-			var n = helper.random() * 2 - 1;
+			var n = Minerva.Helper.random() * 2 - 1;
 			return n;
 		},
 		'classicperlin': function(x, y, px, py, args) {
@@ -65,15 +30,15 @@ Minerva.noise = new function() {
 			b10 = perm[j + by0];
 			b01 = perm[i + by1];
 			b11 = perm[j + by1];
-			sx = helper.fade(rx0);
-			sy = helper.fade(ry0);
-			u = helper.grad2(b00, rx0, ry0);
-			v = helper.grad2(b10, rx1, ry0);
-			a = helper.lerp(sx, u, v);
-			u = helper.grad2(b01, rx0, ry1);
-			v = helper.grad2(b11, rx1, ry1);
-			b = helper.lerp(sx, u, v);
-			return 0.5 * (1 + helper.lerp(sy, a, b));
+			sx = Minerva.Helper.fade(rx0);
+			sy = Minerva.Helper.fade(ry0);
+			u = Minerva.Helper.grad2(b00, rx0, ry0);
+			v = Minerva.Helper.grad2(b10, rx1, ry0);
+			a = Minerva.Helper.lerp(sx, u, v);
+			u = Minerva.Helper.grad2(b01, rx0, ry1);
+			v = Minerva.Helper.grad2(b11, rx1, ry1);
+			b = Minerva.Helper.lerp(sx, u, v);
+			return 0.5 * (1 + Minerva.Helper.lerp(sy, a, b));
 		},
 		'improvedperlin': function(x, y, px, py, args) {
 			var bx0, bx1, by0, by1, b00, b01, b10, b11, rx0, rx1, ry0, ry1, sx, sy, a, b, t, u, v, i, j;
@@ -95,15 +60,15 @@ Minerva.noise = new function() {
 			b10 = permMod8[j + by0];
 			b01 = permMod8[i + by1];
 			b11 = permMod8[j + by1];
-			sx = helper.fade(rx0);
-			sy = helper.fade(ry0);
+			sx = Minerva.Helper.fade(rx0);
+			sy = Minerva.Helper.fade(ry0);
 			u = rx0 * igrad[b00][0] + ry0 * igrad[b00][1];
 			v = rx1 * igrad[b10][0] + ry0 * igrad[b10][1];
-			a = helper.lerp(sx, u, v);
+			a = Minerva.Helper.lerp(sx, u, v);
 			u = rx0 * igrad[b01][0] + ry1 * igrad[b01][1];
 			v = rx1 * igrad[b11][0] + ry1 * igrad[b11][1];
-			b = helper.lerp(sx, u, v);
-			return 0.5 * (1 + helper.lerp(sy, a, b));
+			b = Minerva.Helper.lerp(sx, u, v);
+			return 0.5 * (1 + Minerva.Helper.lerp(sy, a, b));
 		}
 	};
 	
@@ -180,15 +145,15 @@ Minerva.noise = new function() {
 	}
 	
 	this.generateChannel = function(w, h, params) {
-		args = {};
+		var args = {};
 		for (var k in defaultSettings) { args[k] = defaultSettings[k]; }
 		for (var k in params) { args[k] = params[k]; }
 		args.width = w;
 		args.height = h;
 		if (args.seed == 0) {
-			helper.setSeed(Math.random());
+			Minerva.Helper.setSeed(Math.random());
 		} else {
-			helper.setSeed(args.seed);
+			Minerva.Helper.setSeed(args.seed);
 		}
 		var scale = 1/64;
 		var pw = w;
@@ -198,7 +163,7 @@ Minerva.noise = new function() {
 		result.setSize(w, h);
 
 		var noiseValues = [];
-		helper.permutate(Math.sqrt(pw * ph));
+		Minerva.Helper.permutate(Math.sqrt(pw * ph));
 		
 		var theMax = -1000;
 		var theMin = 1000;
@@ -217,7 +182,7 @@ Minerva.noise = new function() {
 		
 		for (var x = 0; x < w; x++) {
 			for (var y = 0; y < h; y++) {
-				result.setAt((y*h)+x, (noiseValues[0][x][y] - theMin) / rng);
+				result.setAt((y*w)+x, (noiseValues[0][x][y] - theMin) / rng);
 			}
 		}
 		
@@ -233,7 +198,7 @@ Minerva.noise = new function() {
 		var result = new Minerva.Img();
 		result.setSize(w, h);
 		
-		args = {};
+		var args = {};
 		for (var k in defaultSettings) { args[k] = defaultSettings[k]; }
 		for (var k in params) { args[k] = params[k]; }
 		
@@ -241,9 +206,9 @@ Minerva.noise = new function() {
 		args.height = h;
 		
 		if (args.seed == 0) {
-			helper.setSeed(Math.random());
+			Minerva.Helper.setSeed(Math.random());
 		} else {
-			helper.setSeed(args.seed);
+			Minerva.Helper.setSeed(args.seed);
 		}
 		
 		var scale = 1/64;
@@ -261,7 +226,7 @@ Minerva.noise = new function() {
 		var noiseValues = [];
 		
 		for (var c = 0; c < channels; c++) {
-			helper.permutate(Math.sqrt(pw * ph));
+			Minerva.Helper.permutate(Math.sqrt(pw * ph));
 			noiseValues[c] = [];
 			for (var x = 0; x < w; x++) {
 				noiseValues[c][x] = [];
@@ -296,8 +261,8 @@ Minerva.noise = new function() {
 					blue = (noiseValues[2][x][y] - theMin) / rng;
 					alpha = (noiseValues[3][x][y] - theMin) / rng;
 				}
-				result.setColorAt((y*h)+x, {r:red, g:green, b:blue});
-				result.setAlphaAt((y*h)+x, alpha);
+				result.setColorAt((y*w)+x, {r:red, g:green, b:blue});
+				result.setAlphaAt((y*w)+x, alpha);
 			}
 		}
 
@@ -308,8 +273,8 @@ Minerva.noise = new function() {
 					g : val,
 					b : val
 				};
-				result.setColorAt((y*h)+x, col);
-				result.setAlphaAt((y*h)+x, 1);
+				result.setColorAt((y*w)+x, col);
+				result.setAlphaAt((y*w)+x, 1);
 		*/
 		
 		return result;
