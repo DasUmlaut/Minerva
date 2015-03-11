@@ -161,6 +161,7 @@ Minerva.noise = new function() {
 		//colors
 		'color': 'grayscale',
 		
+		'noiseType': 'improvedperlin',
 		'fractalType': 'fBM',
 		'octaveType': 'additive',
 		'sumationType': 'normal',
@@ -178,7 +179,53 @@ Minerva.noise = new function() {
 		return fractalFNs[fractalType](noiseType, x, y, pw, ph, args);
 	}
 	
-	this.generate = function(type, w, h, params) {
+	this.generateChannel = function(w, h, params) {
+		args = {};
+		for (var k in defaultSettings) { args[k] = defaultSettings[k]; }
+		for (var k in params) { args[k] = params[k]; }
+		args.width = w;
+		args.height = h;
+		if (args.seed == 0) {
+			helper.setSeed(Math.random());
+		} else {
+			helper.setSeed(args.seed);
+		}
+		var scale = 1/64;
+		var pw = w;
+		var ph = h;
+		
+		var result = new Minerva.Channel();
+		result.setSize(w, h);
+
+		var noiseValues = [];
+		helper.permutate(Math.sqrt(pw * ph));
+		
+		var theMax = -1000;
+		var theMin = 1000;
+		
+		for (var x = 0; x < w; x++) {
+			noiseValues[x] = [];
+			for (var y = 0; y < h; y++) {
+				var val = fractalFNs[args.fractalType](args.noiseType, scale*x, scale*y, scale*pw, scale*ph, args);
+				noiseValues[x][y] = val;
+				theMin = Math.min(theMin, val);
+				theMax = Math.max(theMax, val);
+			}
+		}
+		
+		var rng = theMax - theMin;
+		
+		for (var x = 0; x < w; x++) {
+			for (var y = 0; y < h; y++) {
+				result.setAt((y*h)+x, (noiseValues[0][x][y] - theMin) / rng);
+			}
+		}
+		
+		return result;
+		
+	}
+	
+	this.generate = function(w, h, params) {
 		
 		var theMax = -1000;
 		var theMin = 1000;
@@ -219,7 +266,7 @@ Minerva.noise = new function() {
 			for (var x = 0; x < w; x++) {
 				noiseValues[c][x] = [];
 				for (var y = 0; y < h; y++) {
-					var val = noise(type, args.fractalType, scale*x, scale*y, scale*pw, scale*ph, args);
+					var val = fractalFNs[args.fractalType](args.noiseType, scale*x, scale*y, scale*pw, scale*ph, args);
 					noiseValues[c][x][y] = val;
 					theMin = Math.min(theMin, val);
 					theMax = Math.max(theMax, val);
