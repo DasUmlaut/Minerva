@@ -76,7 +76,7 @@ var Minerva = new function() {
 		}
 	}
 	
-	var Channel = function() {
+	this.Channel = function() {
 		var data = [];
 		this.width = 0;
 		this.height = 0;
@@ -84,7 +84,7 @@ var Minerva = new function() {
 			data.push(val);
 		}
 		this.set = function(replaceMe) {
-			if (replaceMe instanceof Channel) {
+			if (replaceMe instanceof Minerva.Channel) {
 				data = replaceMe.get();
 			}
 		}
@@ -199,10 +199,10 @@ var Minerva = new function() {
 		};
 		this.width = 0;
 		this.height = 0;
-		var cR = new Channel();
-		var cG = new Channel();
-		var cB = new Channel();
-		var cA = new Channel();
+		var cR = new Minerva.Channel();
+		var cG = new Minerva.Channel();
+		var cB = new Minerva.Channel();
+		var cA = new Minerva.Channel();
 		
 		//Constructor
 		if (val == null) {
