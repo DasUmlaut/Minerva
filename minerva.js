@@ -4,6 +4,40 @@ var Minerva = new function() {
 	var map = {};
 	
 	this.Utility = {};
+	this.Helper = {
+		'setSeed': function(seed) {
+			lib.seed = seed;
+		},
+		'random': function() {
+			lib.seed = (lib.seed * 9301 + 49297) % 233280;
+			var rnd = lib.seed / 233280.0;
+			return rnd;
+		},
+		'permutate': function(size) {
+			var t = [];
+			var u = [];
+			
+			for (i = 0; i < size*2; i++) {
+				var v = Math.round(helper.random() * 255) & 255;
+				t[i] = v;
+				u[i] = v % 8;
+			}
+			lib.perm = t.concat(t);
+			lib.permMod8 = u.concat(u);
+		},
+		'grad2': function(hash, x, y) {
+			var h = hash & 7;
+			var u = h<4 ? x : y;
+			var v = h<4 ? y : x;
+			return ((h&1)?-u : u) + ((h&2)?-2*v : 2*v);
+		},
+		'fade': function(t) {
+			return  t * t * t * ( t * ( t * 6 - 15 ) + 10 );
+		},
+		'lerp': function(t, a, b) {
+			return (a) + (t)*((b)-(a));
+		},
+	};
 	
 	this.Utility.getAverageTotal = function(img) {
 		if (img instanceof Minerva.Img) {
@@ -222,13 +256,11 @@ var Minerva = new function() {
 		lumaB: 0.11,
 	};
 	
-	var convert = {
+	this.Convert = {
 		hex2rgb:function(hex) {
-	
 			var r = (hex >> 16) & 255;
 			var g = (hex >> 8) & 255;
 			var b = hex & 255;
-			
 			return {
 				r: r / 255,
 				g: g / 255,
@@ -304,7 +336,7 @@ var Minerva = new function() {
 		  var r = rgb[0],
 			  g = rgb[1],
 			  b = rgb[2],
-			  h = convert.rgb2hsl(rgb)[0],
+			  h = Minerva.Convert.rgb2hsl(rgb)[0],
 			  w = 1/255 * Math.min(r, Math.min(g, b)),
 			  b = 1 - 1/255 * Math.max(r, Math.max(g, b));
 
@@ -339,7 +371,7 @@ var Minerva = new function() {
 		  return [x * 100, y *100, z * 100];
 		},
 		rgb2lab:function(rgb) {
-		  var xyz = convert.rgb2xyz(rgb),
+		  var xyz = Minerva.Convert.rgb2xyz(rgb),
 				x = xyz[0],
 				y = xyz[1],
 				z = xyz[2],
@@ -360,7 +392,7 @@ var Minerva = new function() {
 		  return [l, a, b];
 		},
 		rgb2lch:function(args) {
-		  return convert.lab2lch(convert.rgb2lab(args));
+		  return Minerva.Convert.lab2lch(Minerva.Convert.rgb2lab(args));
 		},
 		hsl2rgb:function(hsl) {
 		  var h = hsl[0] / 360,
@@ -411,11 +443,11 @@ var Minerva = new function() {
 		  return [h, sv * 100, v * 100];
 		},
 		hsl2hwb:function(args) {
-		  return convert.rgb2hwb(convert.hsl2rgb(args));
+		  return Minerva.Convert.rgb2hwb(Minerva.Convert.hsl2rgb(args));
 		},
 
 		hsl2cmyk:function(args) {
-		  return convert.rgb2cmyk(convert.hsl2rgb(args));
+		  return Minerva.Convert.rgb2cmyk(Minerva.Convert.hsl2rgb(args));
 		},
 		hsv2rgb:function(hsv) {
 		  var h = hsv[0] / 60,
@@ -458,10 +490,10 @@ var Minerva = new function() {
 		  return [h, sl * 100, l * 100];
 		},
 		hsv2hwb:function(args) {
-		  return convert.rgb2hwb(convert.hsv2rgb(args))
+		  return Minerva.Convert.rgb2hwb(Minerva.Convert.hsv2rgb(args))
 		},
 		hsv2cmyk:function(args) {
-		  return convert.rgb2cmyk(convert.hsv2rgb(args));
+		  return Minerva.Convert.rgb2cmyk(Minerva.Convert.hsv2rgb(args));
 		},
 		hwb2rgb:function(hwb) {
 		  var h = hwb[0] / 360,
@@ -499,15 +531,15 @@ var Minerva = new function() {
 		},
 
 		hwb2hsl:function(args) {
-		  return convert.rgb2hsl(convert.hwb2rgb(args));
+		  return Minerva.Convert.rgb2hsl(Minerva.Convert.hwb2rgb(args));
 		},
 
 		hwb2hsv:function(args) {
-		  return convert.rgb2hsv(convert.hwb2rgb(args));
+		  return Minerva.Convert.rgb2hsv(Minerva.Convert.hwb2rgb(args));
 		},
 
 		hwb2cmyk:function(args) {
-		  return convert.rgb2cmyk(convert.hwb2rgb(args));
+		  return Minerva.Convert.rgb2cmyk(Minerva.Convert.hwb2rgb(args));
 		},
 
 		cmyk2rgb:function(cmyk) {
@@ -524,15 +556,15 @@ var Minerva = new function() {
 		},
 
 		cmyk2hsl:function(args) {
-		  return convert.rgb2hsl(convert.cmyk2rgb(args));
+		  return Minerva.Convert.rgb2hsl(Minerva.Convert.cmyk2rgb(args));
 		},
 
 		cmyk2hsv:function(args) {
-		  return convert.rgb2hsv(convert.cmyk2rgb(args));
+		  return Minerva.Convert.rgb2hsv(Minerva.Convert.cmyk2rgb(args));
 		},
 
 		cmyk2hwb:function(args) {
-		  return convert.rgb2hwb(convert.cmyk2rgb(args));
+		  return Minerva.Convert.rgb2hwb(Minerva.Convert.cmyk2rgb(args));
 		},
 		xyz2rgb:function(xyz) {
 		  var x = xyz[0] / 100,
@@ -582,7 +614,7 @@ var Minerva = new function() {
 		},
 
 		xyz2lch:function(args) {
-		  return convert.lab2lch(convert.xyz2lab(args));
+		  return Minerva.Convert.lab2lch(Minerva.Convert.xyz2lab(args));
 		},
 
 		lab2xyz:function(lab) {
@@ -622,7 +654,7 @@ var Minerva = new function() {
 		},
 
 		lab2rgb:function(args) {
-		  return convert.xyz2rgb(convert.lab2xyz(args));
+		  return Minerva.Convert.xyz2rgb(Minerva.Convert.lab2xyz(args));
 		},
 
 		lch2lab:function(lch) {
@@ -638,11 +670,11 @@ var Minerva = new function() {
 		},
 
 		lch2xyz:function(args) {
-		  return convert.lab2xyz(convert.lch2lab(args));
+		  return Minerva.Convert.lab2xyz(Minerva.Convert.lch2lab(args));
 		},
 
 		lch2rgb:function(args) {
-		  return convert.lab2rgb(convert.lch2lab(args));
+		  return Minerva.Convert.lab2rgb(Minerva.Convert.lch2lab(args));
 		},
 
 		rgb2hsy:function(args) {
@@ -958,9 +990,9 @@ var Minerva = new function() {
 	var mixmodes = {
 		
 		'hslhue':function(a, b) {
-			var hslA = convert.rgb2hsl([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var hslB = convert.rgb2hsl([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.hsl2rgb([hslB[0], hslA[1], hslA[2]]);
+			var hslA = Minerva.Convert.rgb2hsl([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var hslB = Minerva.Convert.rgb2hsl([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.hsl2rgb([hslB[0], hslA[1], hslA[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -969,9 +1001,9 @@ var Minerva = new function() {
 		},
 
 		'hslsaturation':function(a, b) {
-			var hslA = convert.rgb2hsl([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var hslB = convert.rgb2hsl([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.hsl2rgb([hslA[0], hslB[1], hslA[2]]);
+			var hslA = Minerva.Convert.rgb2hsl([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var hslB = Minerva.Convert.rgb2hsl([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.hsl2rgb([hslA[0], hslB[1], hslA[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -980,9 +1012,9 @@ var Minerva = new function() {
 		},
 
 		'hsllightness':function(a, b) {
-			var hslA = convert.rgb2hsl([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var hslB = convert.rgb2hsl([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.hsl2rgb([hslA[0], hslA[1], hslB[2]]);
+			var hslA = Minerva.Convert.rgb2hsl([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var hslB = Minerva.Convert.rgb2hsl([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.hsl2rgb([hslA[0], hslA[1], hslB[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -991,9 +1023,9 @@ var Minerva = new function() {
 		},
 
 		'hsvhue':function(a, b) {
-			var hsvA = convert.rgb2hsv([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var hsvB = convert.rgb2hsv([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.hsv2rgb([hsvB[0], hsvA[1], hsvA[2]]);
+			var hsvA = Minerva.Convert.rgb2hsv([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var hsvB = Minerva.Convert.rgb2hsv([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.hsv2rgb([hsvB[0], hsvA[1], hsvA[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1002,9 +1034,9 @@ var Minerva = new function() {
 		},
 
 		'hsvsaturation':function(a, b) {
-			var hsvA = convert.rgb2hsv([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var hsvB = convert.rgb2hsv([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.hsv2rgb([hsvA[0], hsvB[1], hsvA[2]]);
+			var hsvA = Minerva.Convert.rgb2hsv([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var hsvB = Minerva.Convert.rgb2hsv([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.hsv2rgb([hsvA[0], hsvB[1], hsvA[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1013,9 +1045,9 @@ var Minerva = new function() {
 		},
 
 		'hsvvalue':function(a, b) {
-			var hsvA = convert.rgb2hsv([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var hsvB = convert.rgb2hsv([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.hsv2rgb([hsvA[0], hsvA[1], hsvB[2]]);
+			var hsvA = Minerva.Convert.rgb2hsv([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var hsvB = Minerva.Convert.rgb2hsv([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.hsv2rgb([hsvA[0], hsvA[1], hsvB[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1024,9 +1056,9 @@ var Minerva = new function() {
 		},
 
 		'hwbhue':function(a, b) {
-			var hwbA = convert.rgb2hwb([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var hwbB = convert.rgb2hwb([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.hwb2rgb([hwbB[0], hwbA[1], hwbA[2]]);
+			var hwbA = Minerva.Convert.rgb2hwb([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var hwbB = Minerva.Convert.rgb2hwb([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.hwb2rgb([hwbB[0], hwbA[1], hwbA[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1035,9 +1067,9 @@ var Minerva = new function() {
 		},
 
 		'hwbwhiteness':function(a, b) {
-			var hwbA = convert.rgb2hwb([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var hwbB = convert.rgb2hwb([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.hwb2rgb([hwbA[0], hwbB[1], hwbA[2]]);
+			var hwbA = Minerva.Convert.rgb2hwb([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var hwbB = Minerva.Convert.rgb2hwb([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.hwb2rgb([hwbA[0], hwbB[1], hwbA[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1046,9 +1078,9 @@ var Minerva = new function() {
 		},
 
 		'hwbblackness':function(a, b) {
-			var hwbA = convert.rgb2hwb([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var hwbB = convert.rgb2hwb([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.hwb2rgb([hwbA[0], hwbA[1], hwbB[2]]);
+			var hwbA = Minerva.Convert.rgb2hwb([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var hwbB = Minerva.Convert.rgb2hwb([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.hwb2rgb([hwbA[0], hwbA[1], hwbB[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1057,9 +1089,9 @@ var Minerva = new function() {
 		},
 
 		'lablightness':function(a, b) {
-			var labA = convert.rgb2lab([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var labB = convert.rgb2lab([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.lab2rgb([labB[0], labA[1], labA[2]]);
+			var labA = Minerva.Convert.rgb2lab([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var labB = Minerva.Convert.rgb2lab([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.lab2rgb([labB[0], labA[1], labA[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1068,9 +1100,9 @@ var Minerva = new function() {
 		},
 
 		'labalpha':function(a, b) {
-			var labA = convert.rgb2lab([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var labB = convert.rgb2lab([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.lab2rgb([labA[0], labB[1], labA[2]]);
+			var labA = Minerva.Convert.rgb2lab([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var labB = Minerva.Convert.rgb2lab([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.lab2rgb([labA[0], labB[1], labA[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1079,9 +1111,9 @@ var Minerva = new function() {
 		},
 
 		'labbeta':function(a, b) {
-			var labA = convert.rgb2lab([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var labB = convert.rgb2lab([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.lab2rgb([labA[0], labA[1], labB[2]]);
+			var labA = Minerva.Convert.rgb2lab([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var labB = Minerva.Convert.rgb2lab([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.lab2rgb([labA[0], labA[1], labB[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1090,9 +1122,9 @@ var Minerva = new function() {
 		},
 
 		'lchlightness':function(a, b) {
-			var lchA = convert.rgb2lch([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var lchB = convert.rgb2lch([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.lch2rgb([lchB[0], lchA[1], lchA[2]]);
+			var lchA = Minerva.Convert.rgb2lch([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var lchB = Minerva.Convert.rgb2lch([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.lch2rgb([lchB[0], lchA[1], lchA[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1101,9 +1133,9 @@ var Minerva = new function() {
 		},
 
 		'lchchroma':function(a, b) {
-			var lchA = convert.rgb2lch([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var lchB = convert.rgb2lch([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.lch2rgb([lchA[0], lchB[1], lchA[2]]);
+			var lchA = Minerva.Convert.rgb2lch([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var lchB = Minerva.Convert.rgb2lch([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.lch2rgb([lchA[0], lchB[1], lchA[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1112,9 +1144,9 @@ var Minerva = new function() {
 		},
 
 		'lchhue':function(a, b) {
-			var lchA = convert.rgb2lch([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var lchB = convert.rgb2lch([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.lch2rgb([lchA[0], lchA[1], lchB[2]]);
+			var lchA = Minerva.Convert.rgb2lch([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var lchB = Minerva.Convert.rgb2lch([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.lch2rgb([lchA[0], lchA[1], lchB[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1123,9 +1155,9 @@ var Minerva = new function() {
 		},
 
 		'hsyhue':function(a, b) {
-			var hsyA = convert.rgb2hsy([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var hsyB = convert.rgb2hsy([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.hsy2rgb([hsyB[0], hsyA[1], hsyA[2]]);
+			var hsyA = Minerva.Convert.rgb2hsy([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var hsyB = Minerva.Convert.rgb2hsy([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.hsy2rgb([hsyB[0], hsyA[1], hsyA[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1134,9 +1166,9 @@ var Minerva = new function() {
 		},
 
 		'hsysaturation':function(a, b) {
-			var hsyA = convert.rgb2hsy([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var hsyB = convert.rgb2hsy([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.hsy2rgb([hsyA[0], hsyB[1], hsyA[2]]);
+			var hsyA = Minerva.Convert.rgb2hsy([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var hsyB = Minerva.Convert.rgb2hsy([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.hsy2rgb([hsyA[0], hsyB[1], hsyA[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1145,9 +1177,9 @@ var Minerva = new function() {
 		},
 
 		'hsyluma':function(a, b) {
-			var hsyA = convert.rgb2hsy([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var hsyB = convert.rgb2hsy([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.hsy2rgb([hsyA[0], hsyA[1], hsyB[2]]);
+			var hsyA = Minerva.Convert.rgb2hsy([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var hsyB = Minerva.Convert.rgb2hsy([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.hsy2rgb([hsyA[0], hsyA[1], hsyB[2]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1156,9 +1188,9 @@ var Minerva = new function() {
 		},
 
 		'cmykcyan':function(a, b) {
-			var cmykA = convert.rgb2cmyk([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var cmykB = convert.rgb2cmyk([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.cmyk2rgb([cmykB[0], cmykA[1], cmykA[2], cmykA[3]]);
+			var cmykA = Minerva.Convert.rgb2cmyk([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var cmykB = Minerva.Convert.rgb2cmyk([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.cmyk2rgb([cmykB[0], cmykA[1], cmykA[2], cmykA[3]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1167,9 +1199,9 @@ var Minerva = new function() {
 		},
 
 		'cmykmagenta':function(a, b) {
-			var cmykA = convert.rgb2cmyk([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var cmykB = convert.rgb2cmyk([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.cmyk2rgb([cmykA[0], cmykB[1], cmykA[2], cmykA[3]]);
+			var cmykA = Minerva.Convert.rgb2cmyk([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var cmykB = Minerva.Convert.rgb2cmyk([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.cmyk2rgb([cmykA[0], cmykB[1], cmykA[2], cmykA[3]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1178,9 +1210,9 @@ var Minerva = new function() {
 		},
 
 		'cmykyellow':function(a, b) {
-			var cmykA = convert.rgb2cmyk([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var cmykB = convert.rgb2cmyk([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.cmyk2rgb([cmykA[0], cmykA[1], cmykB[2], cmykA[3]]);
+			var cmykA = Minerva.Convert.rgb2cmyk([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var cmykB = Minerva.Convert.rgb2cmyk([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.cmyk2rgb([cmykA[0], cmykA[1], cmykB[2], cmykA[3]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1189,9 +1221,9 @@ var Minerva = new function() {
 		},
 
 		'cmykkey':function(a, b) {
-			var cmykA = convert.rgb2cmyk([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
-			var cmykB = convert.rgb2cmyk([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
-			var theOut = convert.cmyk2rgb([cmykA[0], cmykA[1], cmykA[2], cmykB[3]]);
+			var cmykA = Minerva.Convert.rgb2cmyk([(a.r * 255) & 255, (a.g * 255) & 255, (a.b * 255) & 255]);
+			var cmykB = Minerva.Convert.rgb2cmyk([(b.r * 255) & 255, (b.g * 255) & 255, (b.b * 255) & 255]);
+			var theOut = Minerva.Convert.cmyk2rgb([cmykA[0], cmykA[1], cmykA[2], cmykB[3]]);
 			return {
 				r:theOut[0] / 255,
 				g:theOut[1] / 255,
@@ -1265,8 +1297,8 @@ var Minerva = new function() {
 		
 		if (baseDataType == 1 && blendDataType == 1) {
 			var rC = {};
-			var cbaseData = convert.hex2rgb(baseData);
-			var cblendData = convert.hex2rgb(blendData);
+			var cbaseData = Minerva.Convert.hex2rgb(baseData);
+			var cblendData = Minerva.Convert.hex2rgb(blendData);
 			if (whichBlendMode == "b") {
 				rC = {
 					r: colorBlendFn(cbaseData.r, cblendData.r),
@@ -1293,7 +1325,7 @@ var Minerva = new function() {
 				} else {
 					cBase = baseData.getColorAt(i);
 				}
-				var cBlend = convert.hex2rgb(blendData);
+				var cBlend = Minerva.Convert.hex2rgb(blendData);
 				if (whichBlendMode == "b") {
 					rC = {
 						r: colorBlendFn(cBase.r, cBlend.r),
@@ -1337,7 +1369,7 @@ var Minerva = new function() {
 				} else {
 					cBlend = blendData.getColorAt(i);
 				}
-				var cBase = convert.hex2rgb(baseData);
+				var cBase = Minerva.Convert.hex2rgb(baseData);
 				if (whichBlendMode == "b") {
 					rC = {
 						r: colorBlendFn(cBase.r, cBlend.r),
