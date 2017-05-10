@@ -267,6 +267,14 @@ var Minerva = new function() {
 				b: b / 255
 			};
 		},
+		
+		rgb2hex:function(rgb) {
+			var bin = rgb[0] << 16 | rgb[1] << 8 | rgb[2];
+			return (function(h){
+				return new Array(7-h.length).join("0")+h
+			})(bin.toString(16).toUpperCase());
+		},
+		
 		rgb2hsl:function(rgb) {
 		  var r = rgb[0]/255,
 			  g = rgb[1]/255,
